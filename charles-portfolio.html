@@ -1,0 +1,2268 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Charles Okekearu — Data Analyst</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;1,300&family=Instrument+Serif:ital@0;1&display=swap"
+    rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  <style>
+    /* ═══════════════════════════════════════════════════════════
+   RESET & DESIGN TOKENS
+   ═══════════════════════════════════════════════════════════ */
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --ink: #0d0d0d;
+      --paper: #f4f0e8;
+      --accent: #c84b31;
+      --accent2: #2a6b5a;
+      --muted: #7a7060;
+      --card: #ece8df;
+      --line: #c8c0b0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'DM Mono', monospace;
+      background: var(--paper);
+      color: var(--ink);
+      overflow-x: hidden;
+      cursor: none;
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+   CUSTOM CURSOR
+   ═══════════════════════════════════════════════════════════ */
+
+    .cursor {
+      position: fixed;
+      width: 12px;
+      height: 12px;
+      background: var(--accent);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: width .2s, height .2s, background .2s;
+      mix-blend-mode: multiply;
+    }
+
+    .cursor-ring {
+      position: fixed;
+      width: 36px;
+      height: 36px;
+      border: 1.5px solid var(--accent);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9998;
+      transform: translate(-50%, -50%);
+      transition: width .3s, height .3s, opacity .3s;
+      opacity: .6;
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+   NAVIGATION
+   ═══════════════════════════════════════════════════════════ */
+
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.2rem 3rem;
+      background: var(--paper);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .nav-logo {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 1.1rem;
+      letter-spacing: -.02em;
+      color: var(--ink);
+      text-decoration: none;
+    }
+
+    .nav-logo span {
+      color: var(--accent);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2.5rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-size: .72rem;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color .2s;
+    }
+
+    .nav-links a:hover {
+      color: var(--ink);
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+   HERO SECTION
+   ═══════════════════════════════════════════════════════════ */
+
+    .hero {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      padding-top: 80px;
+      overflow: hidden;
+    }
+
+    .hero-left {
+      padding: 6rem 3rem 4rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      position: relative;
+      z-index: 2;
+    }
+
+    .hero-tag {
+      font-size: .68rem;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: .8rem;
+    }
+
+    .hero-tag::before {
+      content: '';
+      display: inline-block;
+      width: 32px;
+      height: 1px;
+      background: var(--accent);
+    }
+
+    .hero-name {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(3.5rem, 7vw, 6.5rem);
+      font-weight: 800;
+      line-height: .92;
+      letter-spacing: -.03em;
+      margin-bottom: 2rem;
+    }
+
+    .hero-name .line1 {
+      display: block;
+    }
+
+    .hero-name .line2 {
+      display: block;
+      color: var(--accent);
+    }
+
+    .hero-name .line3 {
+      display: block;
+      font-style: italic;
+      font-family: 'Instrument Serif', serif;
+      font-weight: 400;
+      color: var(--accent2);
+    }
+
+    .hero-bio {
+      max-width: 380px;
+      font-size: .85rem;
+      line-height: 1.8;
+      color: var(--muted);
+      margin-bottom: 2.5rem;
+    }
+
+    .hero-cta {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    /* ── Buttons ── */
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+      padding: .85rem 2rem;
+      background: var(--ink);
+      color: var(--paper);
+      font-family: 'DM Mono', monospace;
+      font-size: .72rem;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      text-decoration: none;
+      border: 2px solid var(--ink);
+      transition: background .25s, color .25s, transform .2s;
+    }
+
+    .btn-primary:hover {
+      background: var(--accent);
+      border-color: var(--accent);
+      transform: translateY(-2px);
+    }
+
+    .btn-outline {
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+      padding: .85rem 2rem;
+      background: transparent;
+      color: var(--ink);
+      font-family: 'DM Mono', monospace;
+      font-size: .72rem;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      text-decoration: none;
+      border: 2px solid var(--ink);
+      transition: background .25s, color .25s, transform .2s;
+    }
+
+    .btn-outline:hover {
+      background: var(--ink);
+      color: var(--paper);
+      transform: translateY(-2px);
+    }
+
+    /* ── Hero Right / Stats ── */
+
+    .hero-right {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .hero-graphic {
+      position: absolute;
+      inset: 0;
+      background: var(--card);
+      clip-path: polygon(8% 0%, 100% 0%, 100% 100%, 0% 100%);
+    }
+
+    .hero-stats {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      padding: 3rem;
+    }
+
+    .stat-card {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      padding: 1.8rem 1.5rem;
+      position: relative;
+      overflow: hidden;
+      transition: transform .25s, box-shadow .25s;
+    }
+
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: var(--accent);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform .3s;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, .08);
+    }
+
+    .stat-card:hover::before {
+      transform: scaleX(1);
+    }
+
+    .stat-card:nth-child(2)::before {
+      background: var(--accent2);
+    }
+
+    .stat-num {
+      font-family: 'Syne', sans-serif;
+      font-size: 2.8rem;
+      font-weight: 800;
+      line-height: 1;
+      margin-bottom: .4rem;
+    }
+
+    .stat-num span {
+      color: var(--accent);
+    }
+
+    .stat-label {
+      font-size: .68rem;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+   SHARED SECTION STYLES
+   ═══════════════════════════════════════════════════════════ */
+
+    section {
+      padding: 6rem 3rem;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: baseline;
+      gap: 1.5rem;
+      margin-bottom: 3.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .section-num {
+      font-size: .65rem;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    .section-title {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(1.8rem, 4vw, 3rem);
+      font-weight: 800;
+      letter-spacing: -.03em;
+      line-height: 1;
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+   SKILLS SECTION
+   ═══════════════════════════════════════════════════════════ */
+
+    #skills {
+      background: var(--ink);
+      color: var(--paper);
+    }
+
+    #skills .section-title {
+      color: var(--paper);
+    }
+
+    #skills .section-num {
+      color: var(--accent);
+    }
+
+    #skills .section-header {
+      border-color: #2a2a2a;
+    }
+
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.5px;
+      background: #1a1a1a;
+    }
+
+    .skill-block {
+      background: var(--ink);
+      padding: 2.5rem 2rem;
+      transition: background .25s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .skill-block::after {
+      content: attr(data-icon);
+      position: absolute;
+      right: 1.5rem;
+      bottom: 1rem;
+      font-size: 3rem;
+      opacity: .06;
+      transition: opacity .3s, transform .3s;
+    }
+
+    .skill-block:hover {
+      background: #161616;
+    }
+
+    .skill-block:hover::after {
+      opacity: .12;
+      transform: scale(1.2) rotate(-5deg);
+    }
+
+    .skill-cat {
+      font-size: .65rem;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: .8rem;
+    }
+
+    .skill-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      color: var(--paper);
+    }
+
+    .skill-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .4rem;
+    }
+
+    .tag {
+      font-size: .65rem;
+      letter-spacing: .06em;
+      padding: .25rem .65rem;
+      border: 1px solid #2a2a2a;
+      color: #8a8070;
+      transition: border-color .2s, color .2s;
+    }
+
+    .skill-block:hover .tag {
+      border-color: #3a3a3a;
+      color: #aaa098;
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+   EXPERIENCE SECTION
+   ═══════════════════════════════════════════════════════════ */
+
+    #experience {
+      background: var(--paper);
+    }
+
+    .exp-timeline {
+      position: relative;
+    }
+
+    .exp-timeline::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 1px;
+      background: var(--line);
+    }
+
+    .exp-item {
+      padding-left: 3rem;
+      padding-bottom: 3rem;
+      position: relative;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity .5s, transform .5s;
+    }
+
+    .exp-item.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .exp-dot {
+      position: absolute;
+      left: -5px;
+      top: 6px;
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+      background: var(--accent);
+      border: 2px solid var(--paper);
+    }
+
+    .exp-period {
+      font-size: .65rem;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: .4rem;
+    }
+
+    .exp-role {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.4rem;
+      font-weight: 700;
+      line-height: 1.1;
+      margin-bottom: .25rem;
+    }
+
+    .exp-company {
+      font-size: .8rem;
+      color: var(--muted);
+      margin-bottom: 1.2rem;
+      font-style: italic;
+    }
+
+    .exp-bullets {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: .6rem;
+    }
+
+    .exp-bullets li {
+      font-size: .82rem;
+      line-height: 1.7;
+      color: #444;
+      padding-left: 1.2rem;
+      position: relative;
+    }
+
+    .exp-bullets li::before {
+      content: '→';
+      position: absolute;
+      left: 0;
+      color: var(--accent);
+      font-size: .7rem;
+    }
+
+    .exp-badge {
+      display: inline-flex;
+      align-items: center;
+      font-size: .62rem;
+      letter-spacing: .1em;
+      padding: .2rem .6rem;
+      background: #eee8dc;
+      color: var(--accent2);
+      border: 1px solid #d0c8b8;
+      margin-left: .5rem;
+      vertical-align: middle;
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+   PROJECTS SECTION
+   ═══════════════════════════════════════════════════════════ */
+
+    #projects {
+      background: var(--card);
+    }
+
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .project-card {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      padding: 2.5rem 2rem;
+      position: relative;
+      overflow: hidden;
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity .5s, transform .5s, box-shadow .3s;
+    }
+
+    .project-card.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .project-card:hover {
+      box-shadow: 0 16px 48px rgba(0, 0, 0, .1);
+    }
+
+    .project-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+    }
+
+    .project-card:nth-child(1)::before {
+      background: var(--accent);
+    }
+
+    .project-card:nth-child(2)::before {
+      background: var(--accent2);
+    }
+
+    .project-card:nth-child(3)::before {
+      background: #7b5ea7;
+    }
+
+    .project-icon {
+      font-size: 2.5rem;
+      margin-bottom: 1.2rem;
+      display: block;
+    }
+
+    .project-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: .8rem;
+    }
+
+    .project-desc {
+      font-size: .8rem;
+      line-height: 1.8;
+      color: var(--muted);
+      margin-bottom: 1.5rem;
+    }
+
+    .project-tools {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .4rem;
+    }
+
+    .tool-pill {
+      font-size: .62rem;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      padding: .2rem .6rem;
+      background: var(--card);
+      border: 1px solid var(--line);
+      color: var(--muted);
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+   DASHBOARDS SECTION
+   ═══════════════════════════════════════════════════════════ */
+
+    #dashboards {
+      background: var(--ink);
+      padding: 6rem 3rem;
+    }
+
+    #dashboards .section-title {
+      color: var(--paper);
+    }
+
+    #dashboards .section-num {
+      color: var(--accent);
+    }
+
+    #dashboards .section-header {
+      border-color: #2a2a2a;
+    }
+
+    .dash-intro {
+      font-size: .8rem;
+      color: #5a5048;
+      margin-bottom: 2rem;
+      max-width: 600px;
+      line-height: 1.8;
+    }
+
+    .dash-tabs {
+      display: flex;
+      border: 1px solid #2a2a2a;
+      width: fit-content;
+      margin-bottom: 2rem;
+      overflow: hidden;
+    }
+
+    .dash-tab {
+      padding: .8rem 1.8rem;
+      font-family: 'DM Mono', monospace;
+      font-size: .68rem;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: #5a5048;
+      background: transparent;
+      border: none;
+      border-right: 1px solid #2a2a2a;
+      cursor: pointer;
+      transition: background .2s, color .2s;
+    }
+
+    .dash-tab:last-child {
+      border-right: none;
+    }
+
+    .dash-tab.active {
+      background: var(--accent);
+      color: var(--paper);
+    }
+
+    .dash-tab:hover:not(.active) {
+      background: #1a1a1a;
+      color: #8a8070;
+    }
+
+    .dashboard {
+      display: none;
+    }
+
+    .dashboard.active {
+      display: block;
+    }
+
+    .dash-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--paper);
+      margin-bottom: .3rem;
+    }
+
+    .dash-sub {
+      font-size: .75rem;
+      color: #5a5048;
+      letter-spacing: .05em;
+    }
+
+    .dash-period {
+      font-size: .62rem;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-top: .3rem;
+      margin-bottom: 2rem;
+    }
+
+    /* ── KPI Cards ── */
+
+    .kpi-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 1px;
+      background: #1a1a1a;
+      margin-bottom: 2rem;
+    }
+
+    .kpi {
+      background: #111;
+      padding: 1.4rem 1.2rem;
+    }
+
+    .kpi-val {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: var(--paper);
+      line-height: 1;
+      margin-bottom: .3rem;
+    }
+
+    .kpi-val.up {
+      color: #4ade80;
+    }
+
+    .kpi-val.warn {
+      color: #fbbf24;
+    }
+
+    .kpi-val.down {
+      color: #f87171;
+    }
+
+    .kpi-label {
+      font-size: .58rem;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: #5a5048;
+    }
+
+    .kpi-delta {
+      font-size: .62rem;
+      margin-top: .3rem;
+    }
+
+    .kpi-delta.pos {
+      color: #4ade80;
+    }
+
+    .kpi-delta.neg {
+      color: #f87171;
+    }
+
+    /* ── Chart Grid Layouts ── */
+
+    .cg2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .cg32 {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    /* ── Chart Boxes ── */
+
+    .cbox {
+      background: #111;
+      border: 1px solid #1e1e1e;
+      padding: 1.5rem;
+    }
+
+    .cbox-title {
+      font-size: .6rem;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      color: #5a5048;
+      margin-bottom: 1.2rem;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .cbox-title em {
+      color: var(--accent);
+      font-style: normal;
+    }
+
+    .cbox canvas {
+      max-height: 250px;
+    }
+
+    .cbox.tall canvas {
+      max-height: 290px;
+    }
+
+    /* ── Insight Cards ── */
+
+    .insight {
+      background: #0a0a0a;
+      border: 1px solid #1e1e1e;
+      border-left: 3px solid var(--accent);
+      padding: 1.2rem 1.5rem;
+      margin-top: 1.5rem;
+    }
+
+    .insight-lbl {
+      font-size: .58rem;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: .5rem;
+    }
+
+    .insight-txt {
+      font-size: .78rem;
+      line-height: 1.75;
+      color: #8a8070;
+    }
+
+    .insight-txt strong {
+      color: var(--paper);
+    }
+
+    /* ── Data Tables ── */
+
+    .dtable {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: .7rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .dtable th {
+      text-align: left;
+      padding: .55rem .8rem;
+      font-size: .58rem;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: #5a5048;
+      border-bottom: 1px solid #1e1e1e;
+      background: #0a0a0a;
+    }
+
+    .dtable td {
+      padding: .6rem .8rem;
+      border-bottom: 1px solid #141414;
+      color: #8a8070;
+    }
+
+    .dtable tr:hover td {
+      background: #141414;
+      color: #b0a898;
+    }
+
+    /* ── Status Pills ── */
+
+    .sp {
+      display: inline-block;
+      font-size: .56rem;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      padding: .14rem .45rem;
+      border: 1px solid;
+    }
+
+    .sp.ok {
+      border-color: #166534;
+      color: #4ade80;
+    }
+
+    .sp.warn {
+      border-color: #78350f;
+      color: #fbbf24;
+    }
+
+    .sp.bad {
+      border-color: #7f1d1d;
+      color: #f87171;
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+   CERTIFICATIONS SECTION
+   ═══════════════════════════════════════════════════════════ */
+
+    #certifications {
+      background: var(--paper);
+    }
+
+    .certs-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+    }
+
+    .cert-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      padding: 1.5rem;
+      border: 1px solid var(--line);
+      background: var(--card);
+      transition: border-color .25s, transform .25s;
+    }
+
+    .cert-item:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+    }
+
+    .cert-icon {
+      font-size: 1.6rem;
+      flex-shrink: 0;
+    }
+
+    .cert-name {
+      font-family: 'Syne', sans-serif;
+      font-size: .85rem;
+      font-weight: 700;
+      line-height: 1.3;
+      margin-bottom: .2rem;
+    }
+
+    .cert-issuer {
+      font-size: .63rem;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    .cert-status {
+      font-size: .58rem;
+      padding: .14rem .4rem;
+      margin-top: .3rem;
+      display: inline-block;
+      border: 1px solid;
+    }
+
+    .cert-status.earned {
+      border-color: var(--accent2);
+      color: var(--accent2);
+    }
+
+    .cert-status.in-view {
+      border-color: #c0905a;
+      color: #c0905a;
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+   CONTACT SECTION
+   ═══════════════════════════════════════════════════════════ */
+
+    #contact {
+      background: var(--ink);
+      color: var(--paper);
+    }
+
+    #contact .section-title {
+      color: var(--paper);
+    }
+
+    #contact .section-num {
+      color: var(--accent);
+    }
+
+    #contact .section-header {
+      border-color: #2a2a2a;
+    }
+
+    .contact-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5rem;
+      align-items: center;
+    }
+
+    .contact-tagline {
+      font-family: 'Instrument Serif', serif;
+      font-size: clamp(1.8rem, 4vw, 3.2rem);
+      font-style: italic;
+      color: var(--paper);
+      line-height: 1.2;
+      margin-bottom: 1.5rem;
+    }
+
+    .contact-tagline strong {
+      color: var(--accent);
+      font-style: normal;
+      font-family: 'Syne', sans-serif;
+    }
+
+    .contact-sub {
+      font-size: .82rem;
+      line-height: 1.8;
+      color: #8a8070;
+    }
+
+    .contact-links {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .contact-link {
+      display: flex;
+      align-items: center;
+      gap: 1.2rem;
+      padding: 1.2rem 1.5rem;
+      border: 1px solid #2a2a2a;
+      color: var(--paper);
+      text-decoration: none;
+      font-size: .8rem;
+      transition: background .25s, border-color .25s, transform .25s;
+      letter-spacing: .04em;
+    }
+
+    .contact-link:hover {
+      background: #1a1a1a;
+      border-color: var(--accent);
+      transform: translateX(6px);
+    }
+
+    .contact-link-icon {
+      font-size: 1.2rem;
+    }
+
+    .contact-link-label {
+      font-size: .58rem;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      color: #5a5048;
+      display: block;
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+   FOOTER
+   ═══════════════════════════════════════════════════════════ */
+
+    footer {
+      background: #080808;
+      padding: 1.5rem 3rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid #1a1a1a;
+    }
+
+    footer p {
+      font-size: .63rem;
+      letter-spacing: .1em;
+      color: #3a3028;
+      text-transform: uppercase;
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+   SCROLLBAR
+   ═══════════════════════════════════════════════════════════ */
+
+    ::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--paper);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--accent);
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+   ANIMATIONS
+   ═══════════════════════════════════════════════════════════ */
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .hero-left>* {
+      opacity: 0;
+      animation: fadeUp .6s ease forwards;
+    }
+
+    .hero-tag {
+      animation-delay: .1s;
+    }
+
+    .hero-name {
+      animation-delay: .25s;
+    }
+
+    .hero-bio {
+      animation-delay: .4s;
+    }
+
+    .hero-cta {
+      animation-delay: .55s;
+    }
+
+    .hero-right {
+      animation: fadeUp .8s .3s ease both;
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════════════════════════ */
+
+    @media (max-width: 900px) {
+
+      .cg2,
+      .cg32 {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 768px) {
+      nav {
+        padding: 1rem 1.5rem;
+      }
+
+      .nav-links {
+        display: none;
+      }
+
+      .hero {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-left {
+        padding: 6rem 1.5rem 3rem;
+      }
+
+      .hero-right {
+        min-height: 280px;
+      }
+
+      .hero-stats {
+        grid-template-columns: 1fr 1fr;
+        padding: 2rem 1.5rem;
+      }
+
+      section,
+      #dashboards {
+        padding: 4rem 1.5rem;
+      }
+
+      .contact-layout {
+        grid-template-columns: 1fr;
+        gap: 2.5rem;
+      }
+
+      footer {
+        flex-direction: column;
+        gap: .5rem;
+        text-align: center;
+      }
+
+      .dash-tabs {
+        flex-wrap: wrap;
+        width: 100%;
+      }
+
+      .dash-tab {
+        flex: 1;
+        min-width: 120px;
+      }
+
+      .kpi-row {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+
+  <nav>
+    <a href="#" class="nav-logo">C<span>.</span>O</a>
+    <ul class="nav-links">
+      <li><a href="#skills">Skills</a></li>
+      <li><a href="#experience">Experience</a></li>
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="#dashboards">Dashboards</a></li>
+      <li><a href="#certifications">Certifications</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero" id="home">
+    <div class="hero-left">
+      <div class="hero-tag">Data Analyst · Lagos, Nigeria</div>
+      <h1 class="hero-name">
+        <span class="line1">Charles</span>
+        <span class="line2">Okekearu</span>
+        <span class="line3">— turning data into decisions</span>
+      </h1>
+      <p class="hero-bio">Nearly 5 years bridging IT systems and data analytics. I build dashboards, automate workflows,
+        and surface insights that move supply chains and businesses forward.</p>
+      <div class="hero-cta">
+        <a href="#dashboards" class="btn-primary">View Dashboards ↓</a>
+        <a href="#contact" class="btn-outline">Let's Connect</a>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="hero-graphic"></div>
+      <div class="hero-stats">
+        <div class="stat-card">
+          <div class="stat-num">5<span>+</span></div>
+          <div class="stat-label">Years Experience</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">15<span>%</span></div>
+          <div class="stat-label">Cycle Time Reduced</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">12<span>%</span></div>
+          <div class="stat-label">Process Efficiency Gain</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">99<span>%</span></div>
+          <div class="stat-label">Systems Uptime Achieved</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SKILLS -->
+  <section id="skills">
+    <div class="section-header"><span class="section-num">01 /</span>
+      <h2 class="section-title">Technical Skills</h2>
+    </div>
+    <div class="skills-grid">
+      <div class="skill-block" data-icon="📊">
+        <div class="skill-cat">Analytics & Visualization</div>
+        <div class="skill-title">Data Storytelling</div>
+        <div class="skill-tags"><span class="tag">Power BI</span><span class="tag">Tableau</span><span
+            class="tag">Excel</span><span class="tag">Power Query</span><span class="tag">Pivot Tables</span></div>
+      </div>
+      <div class="skill-block" data-icon="🗄️">
+        <div class="skill-cat">Data Engineering</div>
+        <div class="skill-title">Data Management</div>
+        <div class="skill-tags"><span class="tag">SQL</span><span class="tag">Python</span><span class="tag">Data
+            Cleaning</span><span class="tag">KPI Monitoring</span><span class="tag">Automation</span></div>
+      </div>
+      <div class="skill-block" data-icon="☁️">
+        <div class="skill-cat">Cloud & Infrastructure</div>
+        <div class="skill-title">IT Systems</div>
+        <div class="skill-tags"><span class="tag">AWS</span><span class="tag">Azure</span><span class="tag">Windows
+            Server</span><span class="tag">VM Setup</span><span class="tag">Sys Admin</span></div>
+      </div>
+      <div class="skill-block" data-icon="🔄">
+        <div class="skill-cat">Collaboration & Methodology</div>
+        <div class="skill-title">Agile Workflows</div>
+        <div class="skill-tags"><span class="tag">Jira</span><span class="tag">Slack</span><span class="tag">MS
+            Teams</span><span class="tag">Agile</span><span class="tag">Lean</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EXPERIENCE -->
+  <section id="experience">
+    <div class="section-header"><span class="section-num">02 /</span>
+      <h2 class="section-title">Experience</h2>
+    </div>
+    <div class="exp-timeline">
+      <div class="exp-item">
+        <div class="exp-dot"></div>
+        <div class="exp-period">Nov 2023 – Present</div>
+        <div class="exp-role">Data Analyst <span class="exp-badge">Supply Chain</span></div>
+        <div class="exp-company">CISKA Online Marketplace · Lagos</div>
+        <ul class="exp-bullets">
+          <li>Built interactive Power BI dashboards from complex supply chain datasets, improving process efficiency by
+            <strong>12%</strong>.
+          </li>
+          <li>Optimized order processing workflows via Excel-driven insights — reduced cycle time <strong>15%</strong>
+            and return rates <strong>10%</strong>.</li>
+          <li>Automated reporting pipelines to ensure data accuracy and faster decision-making for leadership.</li>
+          <li>Coordinated cross-functional teams using Jira and Slack within an Agile hybrid workflow.</li>
+        </ul>
+      </div>
+      <div class="exp-item">
+        <div class="exp-dot" style="background:var(--accent2)"></div>
+        <div class="exp-period">Sept 2022 – Aug 2023</div>
+        <div class="exp-role">Logistics & I.T Officer</div>
+        <div class="exp-company">Doorstep Logistics and Transport Services · Lagos</div>
+        <ul class="exp-bullets">
+          <li>Maintained critical IT systems for logistics tracking, achieving <strong>99% uptime</strong> and reducing
+            operational costs <strong>8%</strong>.</li>
+          <li>Streamlined operations with cross-team collaboration, cutting overall costs by <strong>10%</strong>.</li>
+          <li>Implemented automated reporting and web-based resources to replace manual tracking, reducing delivery
+            delays <strong>20%</strong>.</li>
+          <li>Achieved <strong>95% customer satisfaction rate</strong> through proactive communication strategies.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROJECTS -->
+  <section id="projects">
+    <div class="section-header"><span class="section-num">03 /</span>
+      <h2 class="section-title">Projects</h2>
+    </div>
+    <div class="projects-grid">
+      <div class="project-card"><span class="project-icon">🏦</span>
+        <div class="project-title">Wisabi Bank ATM Analysis</div>
+        <p class="project-desc">Developed a Power BI dashboard to analyze ATM transaction patterns across branches.
+          Delivered strategic recommendations to optimize cash flow and reduce downtime.</p>
+        <div class="project-tools"><span class="tool-pill">Power BI</span><span class="tool-pill">DAX</span><span
+            class="tool-pill">Data Modeling</span></div>
+      </div>
+      <div class="project-card"><span class="project-icon">🛒</span>
+        <div class="project-title">Superstore Sales Dashboard</div>
+        <p class="project-desc">Cleaned and modeled 9,995 records using Power Query to build a comprehensive sales
+          performance tracker with interactive filters and KPI scorecards.</p>
+        <div class="project-tools"><span class="tool-pill">Excel</span><span class="tool-pill">Power Query</span><span
+            class="tool-pill">Pivot Tables</span></div>
+      </div>
+      <div class="project-card"><span class="project-icon">📉</span>
+        <div class="project-title">Unemployment Rate Analysis</div>
+        <p class="project-desc">Collaborative project using Tableau to visualize socio-economic data for Lagos State.
+          Provided data-backed insights to support policy and workforce development decisions.</p>
+        <div class="project-tools"><span class="tool-pill">Tableau</span><span class="tool-pill">Data Viz</span><span
+            class="tool-pill">Collaboration</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DASHBOARDS -->
+  <section id="dashboards">
+    <div class="section-header"><span class="section-num">04 /</span>
+      <h2 class="section-title">Live Dashboards</h2>
+    </div>
+    <p class="dash-intro">Three supply chain analytics dashboards built on realistic e-commerce datasets, each modelling
+      a real operational scenario with data-driven insights.</p>
+
+    <div class="dash-tabs">
+      <button class="dash-tab active">📦 Order Fulfillment</button>
+      <button class="dash-tab">🏭 Inventory Health</button>
+      <button class="dash-tab">🚚 Delivery Performance</button>
+    </div>
+
+    <!-- === DASH 1: ORDER FULFILLMENT === -->
+    <div class="dashboard active" id="d0">
+      <div class="dash-title">ShopNaija — Order Fulfillment Analytics</div>
+      <div class="dash-sub">E-Commerce Platform · Nigeria &amp; West Africa · 48,320 Orders</div>
+      <div class="dash-period">Jan 2024 – Dec 2024</div>
+      <div class="kpi-row">
+        <div class="kpi">
+          <div class="kpi-val">48,320</div>
+          <div class="kpi-label">Total Orders</div>
+          <div class="kpi-delta pos">↑ 18.4% YoY</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-val up">94.2%</div>
+          <div class="kpi-label">Fill Rate</div>
+          <div class="kpi-delta pos">↑ 2.1pp vs Q3</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-val warn">2.4d</div>
+          <div class="kpi-label">Avg Processing Time</div>
+          <div class="kpi-delta neg">↑ 0.3d · target 2.0d</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-val down">6.8%</div>
+          <div class="kpi-label">Return Rate</div>
+          <div class="kpi-delta pos">↓ 1.2pp YoY</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-val">₦2.84B</div>
+          <div class="kpi-label">GMV Processed</div>
+          <div class="kpi-delta pos">↑ 22% YoY</div>
+        </div>
+      </div>
+      <div class="cg32">
+        <div class="cbox tall">
+          <div class="cbox-title">Monthly Order Volume &amp; Fill Rate <em>2024</em></div>
+          <canvas id="ch1a"></canvas>
+        </div>
+        <div class="cbox">
+          <div class="cbox-title">Orders by Category <em>Share %</em></div>
+          <canvas id="ch1b"></canvas>
+        </div>
+      </div>
+      <div class="cg2">
+        <div class="cbox">
+          <div class="cbox-title">Quarterly Order Status Breakdown <em>Units</em></div>
+          <canvas id="ch1c"></canvas>
+        </div>
+        <div class="cbox">
+          <div class="cbox-title">Processing Time Distribution <em>Days</em></div>
+          <canvas id="ch1d"></canvas>
+        </div>
+      </div>
+      <div class="insight">
+        <div class="insight-lbl">🔍 Key Insight</div>
+        <div class="insight-txt"><strong>Electronics and Fashion</strong> drive 54% of volume but account for 71% of
+          returns. Processing time spikes in <strong>November (+0.8d)</strong> due to Black Friday demand surge —
+          recommend pre-season staffing scale-up and automated triage rules for high-return SKUs.</div>
+      </div>
+    </div>
+
+    <!-- === DASH 2: INVENTORY HEALTH === -->
+    <div class="dashboard" id="d1">
+      <div class="dash-title">MallHouse — Inventory Health Monitor</div>
+      <div class="dash-sub">Multi-Warehouse E-Commerce · 6 Distribution Centers · 12,440 SKUs</div>
+      <div class="dash-period">Q4 2024</div>
+      <div class="kpi-row">
+        <div class="kpi">
+          <div class="kpi-val">12,440</div>
+          <div class="kpi-label">Active SKUs</div>
+          <div class="kpi-delta pos">↑ 840 new this quarter</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-val warn">18.2%</div>
+          <div class="kpi-label">Stockout Rate</div>
+          <div class="kpi-delta neg">↑ 3.1pp · target &lt;15%</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-val up">4.8×</div>
+          <div class="kpi-label">Inventory Turnover</div>
+          <div class="kpi-delta pos">↑ 0.6× vs Q3</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-val down">₦340M</div>
+          <div class="kpi-label">Dead Stock Value</div>
+          <div class="kpi-delta neg">↑ ₦42M QoQ</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-val">31d</div>
+          <div class="kpi-label">Days on Hand (avg)</div>
+          <div class="kpi-delta pos">↓ 4d vs Q3</div>
+        </div>
+      </div>
+      <div class="cg2">
+        <div class="cbox tall">
+          <div class="cbox-title">Stock Level by Warehouse <em>Units (000s)</em></div>
+          <canvas id="ch2a"></canvas>
+        </div>
+        <div class="cbox tall">
+          <div class="cbox-title">Inventory Turnover by Category <em>Q4 2024</em></div>
+          <canvas id="ch2b"></canvas>
+        </div>
+      </div>
+      <div class="cbox" style="margin-bottom:1.5rem">
+        <div class="cbox-title">Weekly Available Stock vs Customer Demand <em>Oct–Dec 2024</em></div>
+        <canvas id="ch2c" style="max-height:220px"></canvas>
+      </div>
+      <div style="overflow-x:auto">
+        <table class="dtable">
+          <thead>
+            <tr>
+              <th>Category</th>
+              <th>SKUs</th>
+              <th>Avg DOH</th>
+              <th>Stockout %</th>
+              <th>Dead Stock</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Electronics</td>
+              <td>2,180</td>
+              <td>22d</td>
+              <td>12.4%</td>
+              <td>₦48M</td>
+              <td><span class="sp ok">Healthy</span></td>
+            </tr>
+            <tr>
+              <td>Fashion &amp; Apparel</td>
+              <td>3,640</td>
+              <td>41d</td>
+              <td>8.1%</td>
+              <td>₦142M</td>
+              <td><span class="sp warn">Review</span></td>
+            </tr>
+            <tr>
+              <td>Home &amp; Kitchen</td>
+              <td>2,290</td>
+              <td>28d</td>
+              <td>19.7%</td>
+              <td>₦62M</td>
+              <td><span class="sp warn">Review</span></td>
+            </tr>
+            <tr>
+              <td>Beauty &amp; Health</td>
+              <td>1,820</td>
+              <td>18d</td>
+              <td>24.3%</td>
+              <td>₦28M</td>
+              <td><span class="sp bad">Critical</span></td>
+            </tr>
+            <tr>
+              <td>Sports &amp; Outdoor</td>
+              <td>1,310</td>
+              <td>35d</td>
+              <td>11.2%</td>
+              <td>₦38M</td>
+              <td><span class="sp ok">Healthy</span></td>
+            </tr>
+            <tr>
+              <td>Books &amp; Media</td>
+              <td>1,200</td>
+              <td>56d</td>
+              <td>4.0%</td>
+              <td>₦22M</td>
+              <td><span class="sp warn">Review</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="insight">
+        <div class="insight-lbl">🔍 Key Insight</div>
+        <div class="insight-txt"><strong>Beauty &amp; Health</strong> has the highest stockout rate at 24.3% — likely
+          driven by viral social-media product surges without forecast buffer. <strong>Fashion holds ₦142M in dead
+            stock</strong>, indicating over-ordering on slow-moving seasonal styles. Recommend dynamic reorder triggers
+          for Beauty and a 30-day demand lookback model for Fashion buying.</div>
+      </div>
+    </div>
+
+    <!-- === DASH 3: DELIVERY PERFORMANCE === -->
+    <div class="dashboard" id="d2">
+      <div class="dash-title">QuickCart — Last-Mile Delivery Performance</div>
+      <div class="dash-sub">Pan-African E-Commerce Logistics · 8 Cities · 31,800 Shipments</div>
+      <div class="dash-period">H2 2024</div>
+      <div class="kpi-row">
+        <div class="kpi">
+          <div class="kpi-val">31,800</div>
+          <div class="kpi-label">Total Shipments</div>
+          <div class="kpi-delta pos">↑ 24% HoH</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-val up">87.4%</div>
+          <div class="kpi-label">On-Time Delivery</div>
+          <div class="kpi-delta pos">↑ 3.2pp vs H1</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-val warn">4.1d</div>
+          <div class="kpi-label">Avg Delivery Time</div>
+          <div class="kpi-delta neg">↑ 0.4d · target 3.5d</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-val down">3.2%</div>
+          <div class="kpi-label">Damage Rate</div>
+          <div class="kpi-delta neg">↑ 0.5pp vs H1</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-val up">91%</div>
+          <div class="kpi-label">CSAT Score</div>
+          <div class="kpi-delta pos">↑ 2pp HoH</div>
+        </div>
+      </div>
+      <div class="cg32">
+        <div class="cbox tall">
+          <div class="cbox-title">On-Time Delivery Rate by Month <em>H2 2024</em></div>
+          <canvas id="ch3a"></canvas>
+        </div>
+        <div class="cbox">
+          <div class="cbox-title">Delay Root Causes <em>% of Late Shipments</em></div>
+          <canvas id="ch3b"></canvas>
+        </div>
+      </div>
+      <div class="cg2">
+        <div class="cbox">
+          <div class="cbox-title">Avg Delivery Days by City <em>H2 2024</em></div>
+          <canvas id="ch3c"></canvas>
+        </div>
+        <div class="cbox">
+          <div class="cbox-title">Carrier Performance Score <em>0–100</em></div>
+          <canvas id="ch3d"></canvas>
+        </div>
+      </div>
+      <div class="insight">
+        <div class="insight-lbl">🔍 Key Insight</div>
+        <div class="insight-txt"><strong>Kano and Port Harcourt</strong> average 6.2 and 5.8 days respectively — over
+          2.5× the Lagos benchmark — due to last-mile road infrastructure gaps. <strong>GigCarry</strong> has the lowest
+          performance score (61) and accounts for 38% of damages. Recommend renegotiating SLAs or switching to regional
+          alternatives for northern corridor routes.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CERTIFICATIONS -->
+  <section id="certifications">
+    <div class="section-header"><span class="section-num">05 /</span>
+      <h2 class="section-title">Certifications</h2>
+    </div>
+    <div class="certs-grid">
+      <div class="cert-item">
+        <div class="cert-icon">☁️</div>
+        <div>
+          <div class="cert-name">AWS Cloud Practitioner</div>
+          <div class="cert-issuer">Amazon Web Services</div><span class="cert-status earned">Earned</span>
+        </div>
+      </div>
+      <div class="cert-item">
+        <div class="cert-icon">🔷</div>
+        <div>
+          <div class="cert-name">Microsoft Azure Data Fundamentals</div>
+          <div class="cert-issuer">Microsoft</div><span class="cert-status in-view">In Progress</span>
+        </div>
+      </div>
+      <div class="cert-item">
+        <div class="cert-icon">📊</div>
+        <div>
+          <div class="cert-name">Microsoft Fabric Analytics</div>
+          <div class="cert-issuer">Microsoft</div><span class="cert-status in-view">In Progress</span>
+        </div>
+      </div>
+      <div class="cert-item">
+        <div class="cert-icon">📋</div>
+        <div>
+          <div class="cert-name">Google Project Management</div>
+          <div class="cert-issuer">Google</div><span class="cert-status earned">Earned</span>
+        </div>
+      </div>
+      <div class="cert-item">
+        <div class="cert-icon">🔎</div>
+        <div>
+          <div class="cert-name">ALX Data Analytics</div>
+          <div class="cert-issuer">ALX Africa</div><span class="cert-status earned">Earned</span>
+        </div>
+      </div>
+      <div class="cert-item">
+        <div class="cert-icon">📈</div>
+        <div>
+          <div class="cert-name">Tableau Fundamentals</div>
+          <div class="cert-issuer">Tableau / Salesforce</div><span class="cert-status earned">Earned</span>
+        </div>
+      </div>
+      <div class="cert-item">
+        <div class="cert-icon">🌐</div>
+        <div>
+          <div class="cert-name">McKinsey Forward Program</div>
+          <div class="cert-issuer">McKinsey &amp; Company</div><span class="cert-status earned">Earned</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact">
+    <div class="section-header"><span class="section-num">06 /</span>
+      <h2 class="section-title">Contact</h2>
+    </div>
+    <div class="contact-layout">
+      <div>
+        <p class="contact-tagline">Let's build something <strong>meaningful</strong> with your data.</p>
+        <p class="contact-sub">Open to data analyst roles, freelance analytics projects, and collaborations. Based in
+          Lagos — available for remote opportunities worldwide.</p>
+      </div>
+      <div class="contact-links">
+        <a href="mailto:degaule24@gmail.com" class="contact-link"><span class="contact-link-icon">✉</span>
+          <div><span class="contact-link-label">Email</span>degaule24@gmail.com</div>
+        </a>
+        <a href="https://www.linkedin.com/in/charles-okekearu" target="_blank" class="contact-link"><span
+            class="contact-link-icon">in</span>
+          <div><span class="contact-link-label">LinkedIn</span>charles-okekearu</div>
+        </a>
+        <a href="https://degaule24.wixsite.com/charlesokekearu" target="_blank" class="contact-link"><span
+            class="contact-link-icon">🌐</span>
+          <div><span class="contact-link-label">Portfolio</span>degaule24.wixsite.com</div>
+        </a>
+        <a href="tel:+2348150951798" class="contact-link"><span class="contact-link-icon">📞</span>
+          <div><span class="contact-link-label">Phone</span>0815 095 1798</div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p>© 2025 Charles Okekearu</p>
+    <p>Data Analyst · Lagos, Nigeria</p>
+  </footer>
+
+  <script>
+    /* ═══════════════════════════════════════════════════════════
+       CUSTOM CURSOR
+       Follows the mouse with a smooth trailing ring effect.
+       ═══════════════════════════════════════════════════════════ */
+
+    const cursor = document.getElementById('cursor');
+    const cursorRing = document.getElementById('cursorRing');
+
+    let mouseX = 0;
+    let mouseY = 0;
+    let ringX = 0;
+    let ringY = 0;
+
+    document.addEventListener('mousemove', (event) => {
+      mouseX = event.clientX;
+      mouseY = event.clientY;
+    });
+
+    (function animateCursor() {
+      /* Ring trails behind the cursor with easing */
+      ringX += (mouseX - ringX) * 0.18;
+      ringY += (mouseY - ringY) * 0.18;
+
+      cursor.style.left = mouseX + 'px';
+      cursor.style.top = mouseY + 'px';
+      cursorRing.style.left = ringX + 'px';
+      cursorRing.style.top = ringY + 'px';
+
+      requestAnimationFrame(animateCursor);
+    })();
+
+
+    /* ═══════════════════════════════════════════════════════════
+       SCROLL ANIMATIONS
+       Observes experience items and project cards, adding
+       the 'visible' class with staggered delays on scroll.
+       ═══════════════════════════════════════════════════════════ */
+
+    const scrollObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry, index) => {
+          if (entry.isIntersecting) {
+            setTimeout(() => entry.target.classList.add('visible'), index * 120);
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+
+    document.querySelectorAll('.exp-item, .project-card').forEach((element) => {
+      scrollObserver.observe(element);
+    });
+
+
+    /* ═══════════════════════════════════════════════════════════
+       DASHBOARD TAB SWITCHING
+       Toggles active state on dashboard panels and tab buttons.
+       ═══════════════════════════════════════════════════════════ */
+
+    function switchDash(tabIndex) {
+      document.querySelectorAll('.dashboard').forEach((panel, i) => {
+        panel.classList.toggle('active', i === tabIndex);
+      });
+      document.querySelectorAll('.dash-tab').forEach((tab, i) => {
+        tab.classList.toggle('active', i === tabIndex);
+      });
+    }
+
+    /* Bind tab buttons via event listeners instead of inline onclick */
+    document.querySelectorAll('.dash-tab').forEach((tab, index) => {
+      tab.addEventListener('click', () => switchDash(index));
+    });
+
+
+    /* ═══════════════════════════════════════════════════════════
+       CHART.JS CONFIGURATION
+       ═══════════════════════════════════════════════════════════ */
+
+    /* -- Global Defaults -- */
+    Chart.defaults.color = '#5a5048';
+    Chart.defaults.borderColor = '#1e1e1e';
+    Chart.defaults.font.family = "'DM Mono', monospace";
+    Chart.defaults.font.size = 10;
+
+    /* -- Reusable Color Palette -- */
+    const gridColor = '#1e1e1e';
+    const accentRed = '#c84b31';
+    const accentGreen = '#2a6b5a';
+    const blue = '#3b82f6';
+    const gold = '#f59e0b';
+    const purple = '#8b5cf6';
+    const green = '#4ade80';
+    const red = '#f87171';
+    const yellow = '#fbbf24';
+
+
+    /* ─────────────────────────────────────────────────────────
+       DASHBOARD 1: Order Fulfillment (ShopNaija)
+       ───────────────────────────────────────────────────────── */
+
+    /* Chart 1a — Monthly Order Volume & Fill Rate */
+    new Chart('ch1a', {
+      type: 'bar',
+      data: {
+        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+          'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+        datasets: [
+          {
+            type: 'bar',
+            label: 'Orders',
+            data: [3200, 3450, 3800, 4100, 3900, 4300,
+              4600, 4400, 4200, 4800, 5800, 5720],
+            backgroundColor: 'rgba(200, 75, 49, .45)',
+            borderColor: accentRed,
+            borderWidth: 1,
+            yAxisID: 'y'
+          },
+          {
+            type: 'line',
+            label: 'Fill Rate %',
+            data: [91.2, 92.1, 93.5, 93.8, 94.0, 94.5,
+              95.1, 94.8, 94.2, 93.6, 92.4, 94.8],
+            borderColor: green,
+            backgroundColor: 'rgba(74, 222, 128, .08)',
+            fill: true,
+            tension: 0.4,
+            pointRadius: 3,
+            pointBackgroundColor: green,
+            borderWidth: 2,
+            yAxisID: 'y1'
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { labels: { color: '#5a5048', boxWidth: 10 } }
+        },
+        scales: {
+          y: {
+            grid: { color: gridColor },
+            ticks: { color: '#5a5048' }
+          },
+          y1: {
+            position: 'right',
+            min: 88,
+            max: 97,
+            grid: { drawOnChartArea: false },
+            ticks: { color: green, callback: (v) => v + '%' }
+          }
+        }
+      }
+    });
+
+    /* Chart 1b — Orders by Category (Doughnut) */
+    new Chart('ch1b', {
+      type: 'doughnut',
+      data: {
+        labels: ['Electronics', 'Fashion', 'Home & Kitchen',
+          'Beauty', 'Sports', 'Books'],
+        datasets: [{
+          data: [28, 26, 18, 12, 10, 6],
+          backgroundColor: [
+            'rgba(200, 75, 49, .85)',
+            'rgba(42, 107, 90, .85)',
+            'rgba(59, 130, 246, .75)',
+            'rgba(245, 158, 11, .75)',
+            'rgba(139, 92, 246, .75)',
+            'rgba(107, 114, 128, .65)'
+          ],
+          borderWidth: 0,
+          hoverOffset: 6
+        }]
+      },
+      options: {
+        responsive: true,
+        cutout: '65%',
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: { color: '#5a5048', boxWidth: 8, padding: 10 }
+          }
+        }
+      }
+    });
+
+    /* Chart 1c — Quarterly Order Status Breakdown */
+    new Chart('ch1c', {
+      type: 'bar',
+      data: {
+        labels: ['Q1', 'Q2', 'Q3', 'Q4'],
+        datasets: [
+          {
+            label: 'Fulfilled',
+            data: [9820, 11200, 12600, 14700],
+            backgroundColor: 'rgba(74, 222, 128, .55)',
+            borderColor: green,
+            borderWidth: 1
+          },
+          {
+            label: 'Returned',
+            data: [680, 720, 810, 870],
+            backgroundColor: 'rgba(251, 191, 36, .55)',
+            borderColor: yellow,
+            borderWidth: 1
+          },
+          {
+            label: 'Cancelled',
+            data: [420, 380, 310, 290],
+            backgroundColor: 'rgba(248, 113, 113, .55)',
+            borderColor: red,
+            borderWidth: 1
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          x: { stacked: true, grid: { color: gridColor }, ticks: { color: '#5a5048' } },
+          y: { stacked: true, grid: { color: gridColor }, ticks: { color: '#5a5048' } }
+        },
+        plugins: {
+          legend: { labels: { color: '#5a5048', boxWidth: 10 } }
+        }
+      }
+    });
+
+    /* Chart 1d — Processing Time Distribution */
+    new Chart('ch1d', {
+      type: 'bar',
+      data: {
+        labels: ['<1d', '1d', '2d', '3d', '4d', '5d', '>5d'],
+        datasets: [{
+          label: 'Orders',
+          data: [2840, 9600, 18300, 11200, 4200, 1580, 600],
+          backgroundColor: 'rgba(200, 75, 49, .55)',
+          borderColor: accentRed,
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { grid: { color: gridColor }, ticks: { color: '#5a5048' } },
+          y: { grid: { color: gridColor }, ticks: { color: '#5a5048' } }
+        }
+      }
+    });
+
+
+    /* ─────────────────────────────────────────────────────────
+       DASHBOARD 2: Inventory Health (MallHouse)
+       ───────────────────────────────────────────────────────── */
+
+    /* Chart 2a — Stock Level by Warehouse */
+    new Chart('ch2a', {
+      type: 'bar',
+      data: {
+        labels: ['Lagos-Apapa', 'Lagos-Ikeja', 'Abuja',
+          'Ibadan', 'Port Harcourt', 'Kano'],
+        datasets: [
+          {
+            label: 'In Stock',
+            data: [48.2, 36.4, 22.1, 12.9, 18.6, 14.8],
+            backgroundColor: 'rgba(42, 107, 90, .7)',
+            borderColor: accentGreen,
+            borderWidth: 1
+          },
+          {
+            label: 'Reserved',
+            data: [12.4, 9.8, 5.6, 2.8, 4.4, 3.2],
+            backgroundColor: 'rgba(59, 130, 246, .5)',
+            borderColor: blue,
+            borderWidth: 1
+          },
+          {
+            label: 'Low Stock',
+            data: [3.2, 2.1, 1.8, 1.2, 1.6, 2.4],
+            backgroundColor: 'rgba(251, 191, 36, .6)',
+            borderColor: yellow,
+            borderWidth: 1
+          }
+        ]
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        plugins: {
+          legend: { labels: { color: '#5a5048', boxWidth: 10 } }
+        },
+        scales: {
+          x: { stacked: true, grid: { color: gridColor }, ticks: { color: '#5a5048', callback: (v) => v + 'k' } },
+          y: { stacked: true, grid: { color: gridColor }, ticks: { color: '#5a5048' } }
+        }
+      }
+    });
+
+    /* Chart 2b — Inventory Turnover by Category */
+    new Chart('ch2b', {
+      type: 'bar',
+      data: {
+        labels: ['Beauty', 'Electronics', 'Sports', 'Home', 'Fashion', 'Books'],
+        datasets: [{
+          label: 'Turnover (×)',
+          data: [6.8, 5.9, 4.2, 3.8, 3.4, 2.1],
+          backgroundColor: [
+            'rgba(74, 222, 128, .65)',
+            'rgba(74, 222, 128, .65)',
+            'rgba(251, 191, 36, .55)',
+            'rgba(251, 191, 36, .55)',
+            'rgba(251, 191, 36, .55)',
+            'rgba(248, 113, 113, .65)'
+          ],
+          borderWidth: 0
+        }]
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { grid: { color: gridColor }, ticks: { color: '#5a5048' } },
+          y: { grid: { color: gridColor }, ticks: { color: '#5a5048' } }
+        }
+      }
+    });
+
+    /* Chart 2c — Weekly Stock vs Demand */
+    new Chart('ch2c', {
+      type: 'line',
+      data: {
+        labels: ['W1 Oct', 'W2', 'W3', 'W4',
+          'W1 Nov', 'W2', 'W3', 'W4',
+          'W1 Dec', 'W2', 'W3', 'W4'],
+        datasets: [
+          {
+            label: 'Stock Available (000s)',
+            data: [58, 55.4, 52.1, 48.8, 46.2, 43.5,
+              47.8, 52.4, 49.6, 44.8, 38.2, 41.5],
+            borderColor: accentGreen,
+            backgroundColor: 'rgba(42, 107, 90, .1)',
+            fill: true,
+            tension: 0.4,
+            borderWidth: 2,
+            pointRadius: 3
+          },
+          {
+            label: 'Customer Demand (000s)',
+            data: [42, 44.2, 46.8, 51.2, 53.6, 58.4,
+              62.1, 64.8, 58.2, 61.4, 67.8, 71.2],
+            borderColor: gold,
+            borderDash: [4, 3],
+            backgroundColor: 'transparent',
+            tension: 0.4,
+            borderWidth: 2,
+            pointRadius: 3
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { labels: { color: '#5a5048', boxWidth: 10 } }
+        },
+        scales: {
+          x: { grid: { color: gridColor }, ticks: { color: '#5a5048' } },
+          y: { grid: { color: gridColor }, ticks: { color: '#5a5048' } }
+        }
+      }
+    });
+
+
+    /* ─────────────────────────────────────────────────────────
+       DASHBOARD 3: Delivery Performance (QuickCart)
+       ───────────────────────────────────────────────────────── */
+
+    /* Chart 3a — On-Time Delivery Rate by Month */
+    new Chart('ch3a', {
+      type: 'bar',
+      data: {
+        labels: ['Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+        datasets: [
+          {
+            type: 'bar',
+            label: 'Shipments',
+            data: [4200, 4600, 5100, 5600, 6400, 5900],
+            backgroundColor: 'rgba(59, 130, 246, .4)',
+            borderColor: blue,
+            borderWidth: 1,
+            yAxisID: 'y'
+          },
+          {
+            type: 'line',
+            label: 'OTD Rate %',
+            data: [83.2, 84.6, 86.1, 87.4, 85.8, 89.2],
+            borderColor: green,
+            backgroundColor: 'rgba(74, 222, 128, .1)',
+            fill: true,
+            tension: 0.4,
+            borderWidth: 2.5,
+            pointRadius: 4,
+            pointBackgroundColor: green,
+            yAxisID: 'y1'
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { labels: { color: '#5a5048', boxWidth: 10 } }
+        },
+        scales: {
+          y: {
+            grid: { color: gridColor },
+            ticks: { color: '#5a5048' }
+          },
+          y1: {
+            position: 'right',
+            min: 78,
+            max: 94,
+            grid: { drawOnChartArea: false },
+            ticks: { color: green, callback: (v) => v + '%' }
+          }
+        }
+      }
+    });
+
+    /* Chart 3b — Delay Root Causes (Doughnut) */
+    new Chart('ch3b', {
+      type: 'doughnut',
+      data: {
+        labels: ['Traffic/Road', 'Warehouse Delay', 'Wrong Address',
+          'Weather', 'Carrier Capacity', 'Customs/Clearance'],
+        datasets: [{
+          data: [34, 22, 18, 12, 9, 5],
+          backgroundColor: [
+            'rgba(248, 113, 113, .85)',
+            'rgba(251, 191, 36, .85)',
+            'rgba(59, 130, 246, .8)',
+            'rgba(139, 92, 246, .75)',
+            'rgba(200, 75, 49, .75)',
+            'rgba(107, 114, 128, .7)'
+          ],
+          borderWidth: 0,
+          hoverOffset: 6
+        }]
+      },
+      options: {
+        responsive: true,
+        cutout: '60%',
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: { color: '#5a5048', boxWidth: 8, padding: 8 }
+          }
+        }
+      }
+    });
+
+    /* Chart 3c — Avg Delivery Days by City */
+    const deliveryDays = [2.4, 3.1, 3.8, 4.2, 4.6, 5.4, 5.8, 6.2];
+
+    new Chart('ch3c', {
+      type: 'bar',
+      data: {
+        labels: ['Lagos', 'Abuja', 'Ibadan', 'Enugu',
+          'Benin City', 'Kaduna', 'Port Harcourt', 'Kano'],
+        datasets: [{
+          label: 'Avg Days',
+          data: deliveryDays,
+          backgroundColor: deliveryDays.map((days) =>
+            days > 4.5 ? 'rgba(248, 113, 113, .7)' : 'rgba(42, 107, 90, .65)'
+          ),
+          borderWidth: 0
+        }]
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: {
+          x: {
+            grid: { color: gridColor },
+            ticks: { color: '#5a5048' },
+            title: { display: true, text: 'Days', color: '#5a5048' }
+          },
+          y: {
+            grid: { color: gridColor },
+            ticks: { color: '#5a5048' }
+          }
+        }
+      }
+    });
+
+    /* Chart 3d — Carrier Performance Score */
+    new Chart('ch3d', {
+      type: 'bar',
+      data: {
+        labels: ['SwiftMove', 'FedEx NG', 'Kwik Delivery', 'DHL Express', 'GigCarry'],
+        datasets: [{
+          label: 'Score',
+          data: [92, 89, 84, 81, 61],
+          backgroundColor: [
+            'rgba(74, 222, 128, .7)',
+            'rgba(74, 222, 128, .65)',
+            'rgba(251, 191, 36, .65)',
+            'rgba(251, 191, 36, .55)',
+            'rgba(248, 113, 113, .7)'
+          ],
+          borderWidth: 0
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { grid: { color: gridColor }, ticks: { color: '#5a5048' } },
+          y: { min: 50, max: 100, grid: { color: gridColor }, ticks: { color: '#5a5048' } }
+        }
+      }
+    });
+  </script>
+</body>
+
+</html>
